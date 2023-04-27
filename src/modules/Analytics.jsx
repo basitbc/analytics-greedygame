@@ -8,12 +8,14 @@ const headers = {
 class Analytics {
   getAllReports(startDate, endDate) {
     return axios.get(
-      `http://go-dev.greedygame.com/v3/dummy/report?startDate=${startDate}&endDate=${endDate}`,
+      `https://go-dev.greedygame.com/v3/dummy/report?startDate=${startDate}&endDate=${endDate}`,
       { headers }
     );
   }
   getAllApps() {
-    return axios.get(`http://go-dev.greedygame.com/v3/dummy/apps`, { headers });
+    return axios.get(`https://go-dev.greedygame.com/v3/dummy/apps`, {
+      headers,
+    });
   }
 }
 
