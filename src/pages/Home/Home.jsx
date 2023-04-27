@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import Analytics from '../../modules/Analytics';
 import { DateRangePicker } from 'rsuite';
@@ -13,10 +13,12 @@ import {
   setAppsData,
 } from '../../redux/actions/Actions';
 import Table from '../../components/Table/Table';
+import { useLocation } from 'react-router-dom';
 
-const Home = ({ reportsData, setReportsData, toggleSettings, setAppsData }) => {
+const Home = ({ setReportsData, toggleSettings, setAppsData }) => {
   const cache = require('../../cache/index');
-
+  const [copySuccess, setCopySuccess] = useState(false);
+  const location = useLocation();
   const fetchReports = useCallback(
     async (startDate, endDate) => {
       const cacheKey = `${startDate}-${endDate}`;
@@ -57,33 +59,57 @@ const Home = ({ reportsData, setReportsData, toggleSettings, setAppsData }) => {
     }
   }, [cache, setAppsData]);
 
-  const handleDateRangeChange = useCallback(
-    (dates) => {
-      if (dates) {
-        const [start, end] = dates;
-        if (start && end) {
-          const formattedStartDate = start.toISOString().slice(0, 10);
-          const formattedEndDate = end.toISOString().slice(0, 10);
-          setReportsData({}); // clear reports data in the store
-          fetchReports(formattedStartDate, formattedEndDate);
-        }
-      } else {
-        setReportsData({});
+  const handleDateRangeChange = useCallback((dates) => {
+    if (dates) {
+      const [start, end] = dates;
+      if (start && end) {
+        const formattedStartDate = start.toISOString().slice(0, 10);
+        const formattedEndDate = end.toISOString().slice(0, 10);
+        const searchParams = new URLSearchParams({
+          start_date: formattedStartDate,
+          end_date: formattedEndDate,
+        });
+        window.history.replaceState(null, '', '?' + searchParams.toString());
+        fetchReports(formattedStartDate, formattedEndDate);
       }
-    },
-    [fetchReports, setReportsData]
-  );
+    } else {
+      window.history.replaceState(null, '', window.location.pathname);
+      fetchReports(null, null);
+    }
+  }, []);
 
   const setMetricsModalVisible = useCallback(() => {
     toggleSettings();
   }, [toggleSettings]);
 
   useEffect(() => {
-    if (!reportsData || Object.keys(reportsData).length === 0) {
-      fetchReports('2021-05-01', '2021-05-03');
-      fetchApps();
+    const searchParams = new URLSearchParams(location.search);
+    const startDate = searchParams.get('start_date');
+    const endDate = searchParams.get('end_date');
+    fetchApps();
+    if (location.pathname === '/') {
+      const today = new Date();
+      const fifteenDaysAgo = new Date(
+        today.getTime() - 15 * 24 * 60 * 60 * 1000
+      );
+      const formattedStartDate = fifteenDaysAgo.toISOString().slice(0, 10);
+      const formattedEndDate = today.toISOString().slice(0, 10);
+      const searchParams = new URLSearchParams({
+        start_date: formattedStartDate,
+        end_date: formattedEndDate,
+      });
+      window.history.replaceState(null, '', '?' + searchParams.toString());
+      fetchReports(formattedStartDate, formattedEndDate);
+    } else {
+      fetchReports(startDate, endDate);
     }
-  }, [reportsData, fetchReports, fetchApps]);
+  }, [location.search]);
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setCopySuccess(true);
+    setTimeout(() => setCopySuccess(false), 3000);
+  };
 
   return (
     <div>
@@ -94,6 +120,14 @@ const Home = ({ reportsData, setReportsData, toggleSettings, setAppsData }) => {
       <div className='utilities-container'>
         <div>
           <DateRangePicker onChange={handleDateRangeChange} />
+        </div>
+        <div>
+          <button
+            className={`copy-button ${copySuccess ? 'copied' : ''}`}
+            onClick={copyToClipboard}
+          >
+            {copySuccess ? 'Url Copied!' : 'Copy URL'}
+          </button>
         </div>
         <div>
           <button

@@ -123,31 +123,48 @@ const Table = ({ columns, rows, draggedColumns, apps }) => {
                         {revenue ? `$${revenue.toFixed(2)}` : '-'}
                       </td>
                     );
-                  } else if (
-                    col.name === 'clicks' ||
-                    col.name === 'requests' ||
-                    col.name === 'responses'
-                  ) {
+                  } else if (col.name === 'clicks') {
                     const value = sortedRows?.reduce(
-                      (total, row) => total + (row[col.name] || 0),
+                      (total, row) => total + (row.clicks || 0),
                       0
                     );
                     const suffix = value > 1000000 ? 'M' : '';
                     const formattedValue =
-                      suffix === 'M' ? (value / 1000000).toFixed(1) : value;
-                    return <td key={col.name}>{formattedValue + suffix}</td>;
+                      suffix === 'M'
+                        ? (value / 1000000).toFixed(1) + 'M'
+                        : value;
+                    return <td key={col.name}>{formattedValue}</td>;
+                  } else if (col.name === 'requests') {
+                    const value = sortedRows?.reduce(
+                      (total, row) => total + (row.requests || 0),
+                      0
+                    );
+                    const suffix = value > 1000000 ? 'M' : '';
+                    const formattedValue =
+                      suffix === 'M'
+                        ? (value / 1000000).toFixed(1) + 'M'
+                        : value;
+                    return <td key={col.name}>{formattedValue}</td>;
+                  } else if (col.name === 'responses') {
+                    const value = sortedRows?.reduce(
+                      (total, row) => total + (row.responses || 0),
+                      0
+                    );
+                    const suffix = value > 1000000 ? 'M' : '';
+                    const formattedValue =
+                      suffix === 'M'
+                        ? (value / 1000000).toFixed(1) + 'M'
+                        : value;
+                    return <td key={col.name}>{formattedValue}</td>;
                   } else if (col.name === 'impressions') {
                     const impressions = sortedRows?.reduce(
                       (total, row) => total + (row.impressions || 0),
                       0
                     );
-                    const formattedImpressions = impressions?.toLocaleString(
-                      undefined,
-                      {
-                        minimumFractionDigits: 0,
-                        maximumFractionDigits: 0,
-                      }
-                    );
+                    const formattedImpressions =
+                      impressions > 1000000
+                        ? `${(impressions / 1000000).toFixed(1)}M`
+                        : impressions;
                     return <td key={col.name}>{formattedImpressions}</td>;
                   } else {
                     return <td key={col.name}>{total}</td>;
