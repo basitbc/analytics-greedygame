@@ -1,0 +1,17 @@
+@import "rsuite/dist/rsuite.css";
+.header-container h4{
+margin: 40px 0 30px 20px;
+}
+
+.utilities-container{
+padding: 0 20px;
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+}
+  
+
+.column-container.placeholder {
+    opacity: 0;
+    background-color: transparent;
+  }

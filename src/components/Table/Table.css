@@ -1,0 +1,44 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+.table-container {
+    overflow: auto;
+    margin: 40px 20px;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+  
+  thead {
+    background-color: #f8f8f8;
+    font-size: 17px;
+    color: black;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 900;
+  }
+  
+  tbody {
+    font-size: 14px;
+  }
+  
+  th,
+  td {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 900;
+    padding: 10px;
+    text-align: left;
+    white-space: nowrap;
+  }
+  
+  th {
+    position: sticky;
+    top: 0;
+    background-color: #f8f8f8;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  td {
+    border-bottom: 1px solid #ddd;
+  }
+  
