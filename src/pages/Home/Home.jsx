@@ -87,7 +87,9 @@ const Home = ({ setReportsData, toggleSettings, setAppsData }) => {
     const startDate = searchParams.get('start_date');
     const endDate = searchParams.get('end_date');
     fetchApps();
-    if (location.pathname === '/') {
+    if (startDate && endDate) {
+      fetchReports(startDate, endDate);
+    } else {
       const today = new Date();
       const fifteenDaysAgo = new Date(
         today.getTime() - 15 * 24 * 60 * 60 * 1000
@@ -100,8 +102,6 @@ const Home = ({ setReportsData, toggleSettings, setAppsData }) => {
       });
       window.history.replaceState(null, '', '?' + searchParams.toString());
       fetchReports(formattedStartDate, formattedEndDate);
-    } else {
-      fetchReports(startDate, endDate);
     }
   }, [location.search]);
 
